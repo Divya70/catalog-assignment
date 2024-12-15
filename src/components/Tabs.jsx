@@ -3,7 +3,7 @@
 // eslint-disable-next-line react/prop-types
 const Tabs = ({activeTab,setActiveTab}) => {
   return (
-    <div className="flex flex-wrap justify-center md:justify-start border-b mb-4">
+    <div className="flex flex-wrap justify-center md:justify-start border-b mb-14">
     {[
       { label: "Summary", value: "summary" },
       { label: "Chart", value: "chart" },

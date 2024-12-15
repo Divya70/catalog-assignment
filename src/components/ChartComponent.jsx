@@ -9,10 +9,17 @@ import {
   CategoryScale,
   LinearScale,
   PointElement,
+  Tooltip,
 } from "chart.js";
 import Tabs from "./Tabs";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
+ChartJS.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip
+);
 
 const ChartComponent = () => {
   const [activeTab, setActiveTab] = useState("chart");
@@ -59,7 +66,8 @@ const ChartComponent = () => {
               borderColor: "#4F46E5",
               fill: true,
               backgroundColor: "rgba(79, 70, 229, 0.1)",
-              tension: 0.4,
+              pointRadius: 0,
+              tension: 0.3,
             },
           ],
         });
@@ -90,10 +98,16 @@ const ChartComponent = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <div className="w-full md:w-auto mb-4">
-        <h1 className="text-3xl md:text-4xl font-bold text-center md:text-left mb-3">
-          {price.toLocaleString()} USD
-        </h1>
+      <div className="w-full md:w-auto mb-10">
+        <div className="flex">
+          <h1 className="text-7xl font-bold text-center md:text-left mb-3 text-[#1A243A]">
+            {price.toLocaleString()}
+          </h1>
+          <span className="text-2xl font-normal leading-7 text-[#BDBEBF]">
+            USD
+          </span>
+        </div>
+
         <p
           className={
             change >= 0
@@ -109,7 +123,7 @@ const ChartComponent = () => {
       {activeTab === "chart" && (
         <div>
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-          <div className="flex flex-wrap justify-between items-center mb-4">
+          <div className="flex flex-wrap justify-between items-center mb-7">
             <div className="flex gap-8 text-sm font-medium text-[#6F7177]">
               <div className="flex items-center justify-center gap-3">
                 <MdOutlineCloseFullscreen />
@@ -147,36 +161,62 @@ const ChartComponent = () => {
           {loading ? (
             <div className="text-center">Loading...</div>
           ) : (
-            <Line
-              data={chartData}
-              options={{
-                responsive: true,
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-                scales: {
-                  x: {
-                    grid: {
+            <div className=" flex">
+              <Line
+                data={chartData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: {
                       display: false,
                     },
-                  },
-                  y: {
-                    grid: {
-                      borderDash: [5, 5],
-                    },
-                    ticks: {
-                      callback: (value) => `$${value}`,
+                    tooltip: {
+                      callbacks: {
+                        label: (tooltipItem) =>
+                          `$${tooltipItem.raw.toLocaleString()}`,
+                      },
                     },
                   },
-                },
-              }}
-            />
+                  elements: {
+                    point: {
+                      radius: 0,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      grid: {
+                        display: false,
+                      },
+                      ticks: {
+                        display: false,
+                      },
+                    },
+                    y: {
+                      grid: {
+                        borderDash: [5, 5],
+                      },
+                      ticks: {
+                        display: false,
+                      },
+                    },
+                  },
+                }}
+              />
+              <div >
+              <button className="  bg-[#1A243A] text-[#FFFFFF] text-lg px-2 py-1 rounded mb-2">
+                {chartData.datasets[0]?.data[
+                  chartData.datasets[0].data.length - 1
+                ]?.toLocaleString() || 0}
+              </button>
+              <button className=" bg-[#4B40EE] text-[#FFFFFF] text-lg px-2 py-1 rounded">
+                {price.toLocaleString()}
+              </button>
+              </div>
+          
+            </div>
           )}
         </div>
       )}
-
       {activeTab !== "chart" && (
         <div className="text-gray-500 text-center mt-20">
           <p>Content for {activeTab} is under construction.</p>
